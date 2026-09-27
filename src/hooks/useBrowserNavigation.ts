@@ -25,24 +25,24 @@ export function useBrowserNavigation(initialPage: Page) {
     `Opened ${initialPage.title}`,
   ])
 
-  // Navigate to a new page
+  // Visit a new page
   const navigateTo = (newPage: Page): void => {
-    // Do nothing if the user clicks the page
-    // that is already currently open.
+    // Do nothing if the user selects the current page
     if (newPage.id === currentPage.id) {
       return
     }
 
-    // Current page goes into Back Stack
+    // Put the current page into the Back Stack
     backStackObject.push(currentPage)
 
-    // New page becomes Current Page
+    // A new navigation creates a new path,
+    // so the Forward Stack is cleared.
+    forwardStackObject.clear()
+
+    // Make the new page the current page
     setCurrentPage(newPage)
 
-    // Custom project behavior:
-    // Forward Stack is NOT cleared.
-
-    // Update UI
+    // Update React state for the UI
     setBackStack(backStackObject.toArray())
     setForwardStack(forwardStackObject.toArray())
 
@@ -52,7 +52,7 @@ export function useBrowserNavigation(initialPage: Page) {
     ])
   }
 
-  // Back operation
+  // Go Back
   const goBack = (): void => {
     if (backStackObject.isEmpty()) {
       return
@@ -61,17 +61,17 @@ export function useBrowserNavigation(initialPage: Page) {
     // Current page goes into Forward Stack
     forwardStackObject.push(currentPage)
 
-    // Remove top page from Back Stack
+    // Get the previous page from Back Stack
     const previousPage = backStackObject.pop()
 
     if (!previousPage) {
       return
     }
 
-    // Previous page becomes Current Page
+    // Previous page becomes current
     setCurrentPage(previousPage)
 
-    // Update UI
+    // Update React state
     setBackStack(backStackObject.toArray())
     setForwardStack(forwardStackObject.toArray())
 
@@ -81,7 +81,7 @@ export function useBrowserNavigation(initialPage: Page) {
     ])
   }
 
-  // Forward operation
+  // Go Forward
   const goForward = (): void => {
     if (forwardStackObject.isEmpty()) {
       return
@@ -90,17 +90,17 @@ export function useBrowserNavigation(initialPage: Page) {
     // Current page goes into Back Stack
     backStackObject.push(currentPage)
 
-    // Remove top page from Forward Stack
+    // Get the next page from Forward Stack
     const nextPage = forwardStackObject.pop()
 
     if (!nextPage) {
       return
     }
 
-    // Forward page becomes Current Page
+    // Next page becomes current
     setCurrentPage(nextPage)
 
-    // Update UI
+    // Update React state
     setBackStack(backStackObject.toArray())
     setForwardStack(forwardStackObject.toArray())
 
@@ -112,23 +112,21 @@ export function useBrowserNavigation(initialPage: Page) {
 
   // Close current page
   const closeCurrentPage = (): void => {
-    // If there is no previous page,
-    // the current page cannot be closed.
     if (backStackObject.isEmpty()) {
       return
     }
 
-    // Remove the top page from Back Stack
+    // Remove the previous page from Back Stack
     const previousPage = backStackObject.pop()
 
     if (!previousPage) {
       return
     }
 
-    // Previous page becomes Current Page
+    // Previous page becomes current
     setCurrentPage(previousPage)
 
-    // Update UI
+    // Update React state
     setBackStack(backStackObject.toArray())
     setForwardStack(forwardStackObject.toArray())
 
